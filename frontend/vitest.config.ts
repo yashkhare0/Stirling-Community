@@ -44,42 +44,6 @@ export default defineConfig({
           target: 'es2020'
         }
       },
-      {
-        test: {
-          name: 'proprietary',
-          include: ['src/proprietary/**/*.test.{ts,tsx}'],
-          environment: 'jsdom',
-          globals: true,
-          setupFiles: ['./src/core/setupTests.ts'],
-        },
-        plugins: [
-          react(),
-          tsconfigPaths({
-            projects: ['./tsconfig.proprietary.json'],
-          }),
-        ],
-        esbuild: {
-          target: 'es2020'
-        }
-      },
-      {
-        test: {
-          name: 'desktop',
-          include: ['src/desktop/**/*.test.{ts,tsx}'],
-          environment: 'jsdom',
-          globals: true,
-          setupFiles: ['./src/core/setupTests.ts'],
-        },
-        plugins: [
-          react(),
-          tsconfigPaths({
-            projects: ['./tsconfig.desktop.json'],
-          }),
-        ],
-        esbuild: {
-          target: 'es2020'
-        }
-      },
     ],
   },
   esbuild: {

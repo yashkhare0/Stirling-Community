@@ -3,23 +3,12 @@ import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-export default defineConfig(({ mode }) => {
-  // When DISABLE_ADDITIONAL_FEATURES is false (or unset), enable proprietary features
-  const isProprietary = process.env.DISABLE_ADDITIONAL_FEATURES !== 'true';
-  const isDesktopMode =
-    mode === 'desktop' ||
-    process.env.STIRLING_DESKTOP === 'true' ||
-    process.env.VITE_DESKTOP === 'true';
-
-  const baseProject = isProprietary ? './tsconfig.proprietary.json' : './tsconfig.core.json';
-  const desktopProject = isProprietary ? './tsconfig.desktop.json' : baseProject;
-  const tsconfigProject = isDesktopMode ? desktopProject : baseProject;
-
+export default defineConfig(() => {
   return {
     plugins: [
       react(),
       tsconfigPaths({
-        projects: [tsconfigProject],
+        projects: ['./tsconfig.json'],
       }),
       viteStaticCopy({
         targets: [
@@ -38,16 +27,12 @@ export default defineConfig(({ mode }) => {
     ],
     server: {
       host: true,
-      // make sure this port matches the devUrl port in tauri.conf.json file
       port: 5173,
-      // Tauri expects a fixed port, fail if that port is not available
       strictPort: true,
       watch: {
-        // tell vite to ignore watching `src-tauri`
         ignored: ['**/src-tauri/**'],
       },
-      // Only use proxy in web mode - Tauri handles backend connections directly
-      proxy: isDesktopMode ? undefined : {
+      proxy: {
         '/api': {
           target: 'http://localhost:8080',
           changeOrigin: true,

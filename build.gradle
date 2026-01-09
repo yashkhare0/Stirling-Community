@@ -105,8 +105,7 @@ tasks.register('syncAppVersion') {
         updateTauriConfigVersion(appVersion)
 
         [
-            'frontend/src/core/testing/serverExperienceSimulations.ts',
-            'frontend/src/proprietary/testing/serverExperienceSimulations.ts'
+            'frontend/src/core/testing/serverExperienceSimulations.ts'
         ].each { path ->
             updateSimulationVersion(file(path), appVersion)
         }
@@ -226,11 +225,6 @@ subprojects {
             waitTimeInSeconds = 60 // Increase the wait time to 60 seconds
         }
 
-        tasks.named("forkedSpringBootRun") {
-            dependsOn(":common:jar")
-            dependsOn(":proprietary:jar")
-        }
-
         tasks.register("copySwaggerDoc", Copy) {
             doNotTrackState("Writes SwaggerDoc.json to project root")
             from(layout.projectDirectory.file("SwaggerDoc.json"))
@@ -327,9 +321,6 @@ swaggerhubUpload {
 dependencies {
     implementation project(':stirling-pdf')
     implementation project(':common')
-    if (rootProject.ext.isSecurityDisabled()) {
-        implementation project(':proprietary')
-    }
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"

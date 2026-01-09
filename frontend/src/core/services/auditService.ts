@@ -1,5 +1,3 @@
-import apiClient from '@app/services/apiClient';
-
 export interface AuditSystemStatus {
   enabled: boolean;
   level: string;
@@ -49,17 +47,11 @@ const auditService = {
    * Get audit system status
    */
   async getSystemStatus(): Promise<AuditSystemStatus> {
-    const response = await apiClient.get('/api/v1/proprietary/ui-data/audit-dashboard', {
-      suppressErrorToast: true,
-    });
-    const data = response.data;
-
-    // Map V1 response to expected format
     return {
-      enabled: data.auditEnabled,
-      level: data.auditLevel,
-      retentionDays: data.retentionDays,
-      totalEvents: 0, // Will be fetched separately
+      enabled: false,
+      level: 'OFF',
+      retentionDays: 0,
+      totalEvents: 0,
     };
   },
 
@@ -67,20 +59,24 @@ const auditService = {
    * Get audit events with pagination and filters
    */
   async getEvents(filters: AuditFilters = {}): Promise<AuditEventsResponse> {
-    const response = await apiClient.get<AuditEventsResponse>('/api/v1/proprietary/ui-data/audit-events', {
-      params: filters,
-    });
-    return response.data;
+    return {
+      events: [],
+      totalEvents: 0,
+      page: filters.page ?? 1,
+      pageSize: filters.pageSize ?? 0,
+      totalPages: 0,
+    };
   },
 
   /**
    * Get chart data for dashboard
    */
   async getChartsData(timePeriod: 'day' | 'week' | 'month' = 'week'): Promise<AuditChartsData> {
-    const response = await apiClient.get<AuditChartsData>('/api/v1/proprietary/ui-data/audit-charts', {
-      params: { period: timePeriod },
-    });
-    return response.data;
+    return {
+      eventsByType: { labels: [], values: [] },
+      eventsByUser: { labels: [], values: [] },
+      eventsOverTime: { labels: [], values: [] },
+    };
   },
 
   /**
@@ -90,27 +86,21 @@ const auditService = {
     format: 'csv' | 'json',
     filters: AuditFilters = {}
   ): Promise<Blob> {
-    const response = await apiClient.get('/api/v1/proprietary/ui-data/audit-export', {
-      params: { format, ...filters },
-      responseType: 'blob',
-    });
-    return response.data;
+    return new Blob([], { type: format === 'csv' ? 'text/csv' : 'application/json' });
   },
 
   /**
    * Get available event types for filtering
    */
   async getEventTypes(): Promise<string[]> {
-    const response = await apiClient.get<string[]>('/api/v1/proprietary/ui-data/audit-event-types');
-    return response.data;
+    return [];
   },
 
   /**
    * Get list of users for filtering
    */
   async getUsers(): Promise<string[]> {
-    const response = await apiClient.get<string[]>('/api/v1/proprietary/ui-data/audit-users');
-    return response.data;
+    return [];
   },
 };
 

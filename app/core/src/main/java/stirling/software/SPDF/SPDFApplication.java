@@ -35,8 +35,7 @@ import stirling.software.common.util.UrlUtils;
 @SpringBootApplication(
         scanBasePackages = {
             "stirling.software.SPDF",
-            "stirling.software.common",
-            "stirling.software.proprietary"
+            "stirling.software.common"
         })
 public class SPDFApplication {
 

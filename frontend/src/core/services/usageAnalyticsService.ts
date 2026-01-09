@@ -1,5 +1,3 @@
-import apiClient from '@app/services/apiClient';
-
 export interface EndpointStatistic {
   endpoint: string;
   visits: number;
@@ -25,21 +23,11 @@ const usageAnalyticsService = {
     limit?: number,
     dataType: 'all' | 'api' | 'ui' = 'all'
   ): Promise<EndpointStatisticsResponse> {
-    const params: Record<string, any> = {};
-
-    if (limit !== undefined) {
-      params.limit = limit;
-    }
-
-    if (dataType !== 'all') {
-      params.dataType = dataType;
-    }
-
-    const response = await apiClient.get<EndpointStatisticsResponse>(
-      '/api/v1/proprietary/ui-data/usage-endpoint-statistics',
-      { params }
-    );
-    return response.data;
+    return {
+      endpoints: [],
+      totalEndpoints: 0,
+      totalVisits: 0,
+    };
   },
 
   /**
